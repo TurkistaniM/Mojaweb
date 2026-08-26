@@ -1,0 +1,329 @@
+/* 
+ * منصة مُجاوِب (Mojaweb) — الهوية اللونية المعتمدة (Color Hunt Palette):
+ * #BD4444 (Crimson / Terracotta Red)
+ * #F1DEC4 (Almond / Warm Cream)
+ * #73976A (Sage / Olive Green)
+ * #677E61 (Deep Moss / Hunter Sage)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --c-crimson: #BD4444;
+  --c-cream: #F1DEC4;
+  --c-sage: #73976A;
+  --c-moss: #677E61;
+  
+  /* توافق المتغيرات */
+  --c-sky: #73976A;
+  --c-lavender: #677E61;
+  --c-rosewood: #BD4444;
+  
+  --bg-app: #0e120e;
+  --bg-surface: #151b15;
+  --bg-surface-raised: #1d251d;
+  --bg-surface-hover: #263126;
+  
+  --border-subtle: rgba(115, 151, 106, 0.18);
+  --border-medium: rgba(115, 151, 106, 0.32);
+  --border-focus: rgba(241, 222, 196, 0.6);
+  
+  --text-primary: #f7f5f2;
+  --text-secondary: #d8cebe;
+  --text-muted: #8b9987;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+}
+
+html[dir="ltr"] {
+  font-family: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', system-ui, -apple-system, sans-serif;
+}
+
+/* التمرير الانسيابي */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(115, 151, 106, 0.3);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(189, 68, 68, 0.55);
+}
+
+/* بطاقات وتخطيط احترافي */
+.app-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.app-card:hover {
+  border-color: var(--border-medium);
+}
+
+.app-card-raised {
+  background-color: var(--bg-surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* منطقة الرفع */
+.upload-dropzone {
+  border: 1.5px dashed var(--border-medium);
+  background: rgba(29, 37, 29, 0.45);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover-active {
+  border-color: var(--c-cream);
+  background: rgba(241, 222, 196, 0.08);
+  transform: translateY(-1px);
+}
+
+/* أزرار العمليات الرئيسية */
+.btn-primary {
+  background-color: var(--c-crimson);
+  color: #fff;
+  font-weight: 600;
+  border: 1px solid rgba(241, 222, 196, 0.2);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: #d15050;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(189, 68, 68, 0.35);
+}
+
+.btn-secondary {
+  background-color: var(--c-sage);
+  color: #0e120e;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: #85aa7b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(115, 151, 106, 0.35);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  background-color: var(--bg-surface-raised);
+  color: var(--c-cream);
+  border-color: var(--border-medium);
+}
+
+/* التبويبات */
+.nav-tab-btn {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+.nav-tab-btn:hover {
+  color: var(--text-secondary);
+  background: rgba(115, 151, 106, 0.1);
+}
+.nav-tab-btn.active {
+  background: var(--bg-surface-raised);
+  color: var(--c-cream);
+  border-color: var(--border-medium);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* فقاعات المحادثة */
+.chat-msg-user {
+  background-color: var(--bg-surface-raised);
+  border: 1px solid var(--border-medium);
+  border-radius: 18px 18px 4px 18px;
+  padding: 0.85rem 1.15rem;
+  color: var(--c-cream);
+  font-size: 0.925rem;
+  line-height: 1.65;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+html[dir="ltr"] .chat-msg-user {
+  border-radius: 18px 18px 18px 4px;
+}
+
+.chat-msg-assistant {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px 18px 18px 4px;
+  padding: 1.15rem 1.35rem;
+  color: var(--text-primary);
+  font-size: 0.925rem;
+  line-height: 1.75;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+html[dir="ltr"] .chat-msg-assistant {
+  border-radius: 18px 18px 4px 18px;
+}
+
+/* تنسيقات Markdown */
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+  color: var(--c-cream);
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-content h1 { font-size: 1.25rem; }
+.markdown-content h2 { font-size: 1.125rem; color: var(--c-sage); }
+.markdown-content h3 { font-size: 1rem; color: var(--c-cream); }
+
+.markdown-content p {
+  margin-bottom: 0.75rem;
+}
+.markdown-content ul, .markdown-content ol {
+  margin-bottom: 0.75rem;
+  padding-inline-start: 1.25rem;
+}
+.markdown-content li {
+  margin-bottom: 0.35rem;
+}
+.markdown-content strong {
+  color: var(--c-cream);
+  font-weight: 600;
+}
+.markdown-content blockquote {
+  border-inline-start: 3px solid var(--c-sage);
+  padding-inline-start: 0.85rem;
+  margin: 0.75rem 0;
+  color: var(--c-cream);
+  background: rgba(29, 37, 29, 0.5);
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+html[dir="ltr"] .markdown-content blockquote {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.markdown-content code {
+  background: rgba(14, 18, 14, 0.85);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--c-cream);
+  font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+}
+.markdown-content pre {
+  background: #080b08;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+  direction: ltr;
+  text-align: left;
+}
+.markdown-content pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--c-sage);
+}
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+.markdown-content th, .markdown-content td {
+  border: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.75rem;
+}
+.markdown-content th {
+  background: var(--bg-surface-raised);
+  color: var(--c-cream);
+}
+.markdown-content tr:nth-child(even) {
+  background: rgba(21, 27, 21, 0.5);
+}
+
+/* بطاقات خيارات الاختبار */
+.quiz-opt {
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-raised);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  width: 100%;
+}
+.quiz-opt:hover:not(.disabled) {
+  border-color: var(--c-sage);
+  background: rgba(115, 151, 106, 0.14);
+  transform: translateY(-1px);
+}
+.quiz-opt.selected {
+  border-color: var(--c-crimson) !important;
+  background: rgba(189, 68, 68, 0.18) !important;
+  color: var(--c-cream) !important;
+  font-weight: 600;
+}
+.quiz-opt.correct {
+  border-color: var(--c-sage) !important;
+  background: rgba(115, 151, 106, 0.25) !important;
+  color: #d8f3d0 !important;
+  font-weight: 600;
+}
+.quiz-opt.wrong {
+  border-color: var(--c-crimson) !important;
+  background: rgba(189, 68, 68, 0.25) !important;
+  color: #fecdd3 !important;
+}
+
+/* نبض مؤشر الانتظار */
+.pulse-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--c-sage);
+  animation: pulseAnim 1.3s infinite ease-in-out both;
+}
+.pulse-dot:nth-child(1) { animation-delay: -0.32s; }
+.pulse-dot:nth-child(2) { animation-delay: -0.16s; }
+.pulse-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes pulseAnim {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}

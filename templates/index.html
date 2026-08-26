@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مُجاوِب | Mojaweb</title>
+  <meta name="description" content="منصة دراسية ذكية لمراجعة وفهم المستندات والمحاضرات الصوتية والمرئية، وتوليد الاختبارات والملخصات الفورية.">
+  
+  <link rel="icon" type="image/png" href="/static/images/logo.png">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Marked.js & DOMPurify -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-2.5 flex items-center justify-between">
+      
+      <!-- Clean Logo & Brand (No subtitle text) -->
+      <a href="/" class="flex items-center gap-3">
+        <div class="h-12 w-12 rounded-xl bg-[var(--c-cream)] p-1 border border-[var(--border-subtle)] flex items-center justify-center shadow-sm">
+          <img src="/static/images/logo.png" alt="Mojaweb Logo" class="h-full w-auto object-contain">
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl font-bold text-[var(--c-cream)] font-heading" data-i18n="appName">مُجاوِب</span>
+          <span class="text-[11px] font-medium text-[var(--c-sky)] px-2 py-0.5 rounded-full bg-[var(--bg-surface-raised)] border border-[var(--border-subtle)]" data-i18n="ragBadge">
+            RAG مقيد 100%
+          </span>
+        </div>
+      </a>
+
+      <!-- Right Controls: Language Switcher & New Session -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Language Switcher Button -->
+        <button id="btn-lang-toggle" class="btn-ghost px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5" title="Switch Language">
+          <i class="fa-solid fa-globe text-[var(--c-sky)]"></i>
+          <span id="lang-label">English</span>
+        </button>
+
+        <!-- New Session Button -->
+        <button id="btn-reset-session" class="btn-ghost px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--c-cream)]" title="Start new session">
+          <i class="fa-solid fa-rotate-right text-xs"></i>
+          <span data-i18n="newSession">جلسة جديدة</span>
+        </button>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Sidebar: File Ingestion & Actions (4 Cols) -->
+    <aside class="lg:col-span-4 flex flex-col gap-4">
+
+      <!-- Upload Box -->
+      <div class="app-card p-5 flex flex-col gap-3.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--c-cream)] flex items-center gap-2" data-i18n="uploadTitle">
+            <i class="fa-regular fa-folder-open text-[var(--c-sky)]"></i>
+            <span>المستندات والوسائط</span>
+          </h2>
+          <span class="text-[11px] font-mono text-[var(--text-muted)]" id="storage-usage-text">0.0 / 50 MB</span>
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div id="drop-zone" class="upload-dropzone p-5 text-center flex flex-col items-center justify-center gap-2">
+          <input type="file" id="file-input" multiple accept=".pdf,.docx,.pptx,.txt,.md,.csv,.xlsx,.mp3,.wav,.m4a,.ogg,.aac,.mp4,.mov,.webm,.m4v" class="hidden">
+          <div class="w-10 h-10 rounded-xl bg-[var(--bg-surface-raised)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--c-lavender)] text-base">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-[var(--c-cream)]" data-i18n="uploadSubtitle">اسحب الملفات هنا أو تصفح جهازك</p>
+            <p class="text-[10px] text-[var(--text-muted)] mt-0.5" data-i18n="uploadFormats">PDF, Word, PPTX, Excel, Text, MP3, WAV, MP4</p>
+          </div>
+        </div>
+
+        <!-- Storage Bar -->
+        <div class="w-full bg-[var(--bg-surface-raised)] h-1.5 rounded-full overflow-hidden">
+          <div id="storage-progress-bar" class="bg-[var(--c-sky)] h-full w-0 transition-all duration-300"></div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button id="btn-smart-summary" class="btn-primary py-2 px-3 text-xs flex items-center justify-center gap-1.5" data-i18n="summarizeBtn">
+            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+            <span>توليد ملخص</span>
+          </button>
+          <button id="btn-open-quiz-tab" class="btn-secondary py-2 px-3 text-xs flex items-center justify-center gap-1.5" data-i18n="quizBtn">
+            <i class="fa-solid fa-clipboard-question text-xs"></i>
+            <span>إنشاء اختبار</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Files List -->
+      <div class="app-card p-5 flex-1 flex flex-col min-h-[220px]">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] flex items-center gap-2" data-i18n="activeFilesTitle">
+            <i class="fa-solid fa-layer-group text-[var(--c-lavender)]"></i>
+            <span>الملفات المرفوعة</span>
+          </h3>
+          <span id="active-files-count" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[var(--bg-surface-raised)] text-[var(--c-cream)] border border-[var(--border-subtle)]">0</span>
+        </div>
+
+        <div id="files-list-container" class="flex-1 overflow-y-auto max-h-[280px] space-y-2 pr-1 custom-scrollbar">
+          <div id="empty-files-placeholder" class="h-full flex flex-col items-center justify-center text-center p-6 text-[var(--text-muted)]">
+            <i class="fa-regular fa-file text-2xl mb-1.5 opacity-40"></i>
+            <p class="text-xs" data-i18n="emptyFilesText">لم يتم رفع أي ملفات بعد</p>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-muted)] flex items-center gap-1.5" data-i18n="ephemeralNote">
+          <i class="fa-solid fa-shield-halved text-[var(--c-sky)]"></i>
+          <span>تخزين مؤقت في الذاكرة: تُمسح البيانات تلقائياً عند إنهاء الجلسة</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Main Workspace (8 Cols) -->
+    <main class="lg:col-span-8 flex flex-col app-card overflow-hidden min-h-[600px] max-h-[calc(100vh-140px)]">
+      
+      <!-- Top Navigation Tabs -->
+      <div class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+        <div class="flex items-center gap-1 bg-[var(--bg-app)] p-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)]">
+          <button id="tab-chat-btn" class="nav-tab-btn active" data-i18n="tabChat">
+            <i class="fa-regular fa-comments ml-1"></i> المحادثة
+          </button>
+          <button id="tab-summary-btn" class="nav-tab-btn" data-i18n="tabSummary">
+            <i class="fa-regular fa-file-lines ml-1"></i> الملخص
+          </button>
+          <button id="tab-quiz-btn" class="nav-tab-btn" data-i18n="tabQuiz">
+            <i class="fa-regular fa-circle-check ml-1"></i> الاختبار الذكي
+          </button>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--c-sky)]"></span>
+          <span data-i18n="strictBadge">إجابات موثقة بالسياق</span>
+        </div>
+      </div>
+
+      <!-- 1. Chat Panel -->
+      <div id="chat-view-panel" class="flex-1 flex flex-col overflow-hidden">
+        
+        <!-- Chat Messages History -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar">
+          
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-xl bg-[var(--c-cream)] p-1 flex-shrink-0 flex items-center justify-center shadow border border-[var(--border-subtle)]">
+              <img src="/static/images/logo.png" alt="Mojaweb" class="h-full w-auto object-contain">
+            </div>
+            <div class="chat-msg-assistant max-w-2xl space-y-2">
+              <p class="font-bold text-[var(--c-cream)]" data-i18n="welcomeTitle">مرحباً بك في مُجاوِب 🎓</p>
+              <p class="text-xs text-[var(--text-secondary)] leading-relaxed" data-i18n="welcomeDesc">
+                مساعدك الدراسي المتقدم للإجابة الدقيقة عن أسئلتك استناداً إلى ملفاتك وتسجيلاتك المرفوعة فقط.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quick Prompts Bar -->
+        <div id="quick-prompts-bar" class="px-4 py-2 border-t border-[var(--border-subtle)] bg-[var(--bg-app)]/60 flex items-center gap-2 overflow-x-auto text-xs custom-scrollbar">
+          <span class="text-[var(--text-muted)] flex-shrink-0 text-[11px]"><i class="fa-regular fa-lightbulb text-[var(--c-cream)] ml-1"></i></span>
+          <button class="quick-prompt-btn px-2.5 py-1 rounded-md bg-[var(--bg-surface-raised)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--c-cream)] border border-[var(--border-subtle)] flex-shrink-0 text-xs transition-all" data-i18n="prompt1">
+            ما هي الفكرة والمحاور الأساسية؟
+          </button>
+          <button class="quick-prompt-btn px-2.5 py-1 rounded-md bg-[var(--bg-surface-raised)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--c-cream)] border border-[var(--border-subtle)] flex-shrink-0 text-xs transition-all" data-i18n="prompt2">
+            اذكر أهم التعريفات والمصطلحات
+          </button>
+          <button class="quick-prompt-btn px-2.5 py-1 rounded-md bg-[var(--bg-surface-raised)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-secondary)] hover:text-[var(--c-cream)] border border-[var(--border-subtle)] flex-shrink-0 text-xs transition-all" data-i18n="prompt3">
+            ما هي النتائج والاستنتاجات؟
+          </button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <div class="p-3 sm:p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+          <form id="chat-form" class="flex items-end gap-2">
+            <div class="flex-1 relative bg-[var(--bg-app)] border border-[var(--border-subtle)] focus-within:border-[var(--c-sky)] rounded-[var(--radius-md)] overflow-hidden transition-all">
+              <textarea 
+                id="chat-input" 
+                rows="1" 
+                placeholder="اسأل عن أي شيء في ملفاتك... (Enter للإرسال)"
+                data-i18n-placeholder="chatPlaceholder"
+                class="w-full bg-transparent px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none resize-none max-h-32 custom-scrollbar leading-relaxed"
+              ></textarea>
+            </div>
+            <button 
+              type="submit" 
+              id="send-btn" 
+              class="btn-primary h-11 px-5 text-sm flex items-center justify-center gap-2 flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+              <span class="hidden sm:inline" data-i18n="sendBtn">إرسال</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- 2. Summary Panel -->
+      <div id="summary-view-panel" class="hidden flex-1 flex flex-col overflow-hidden">
+        <div class="p-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] flex items-center justify-between">
+          <span class="text-xs font-bold text-[var(--c-cream)]" data-i18n="summaryTitle">الملخص الأكاديمي الشامل</span>
+          <div class="flex items-center gap-2">
+            <button id="btn-copy-summary" class="btn-ghost px-2.5 py-1 text-xs flex items-center gap-1">
+              <i class="fa-regular fa-copy"></i>
+              <span data-i18n="copyBtn">نسخ</span>
+            </button>
+            <button id="btn-refresh-summary" class="btn-ghost px-2.5 py-1 text-xs flex items-center gap-1">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span data-i18n="refreshBtn">تحديث</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="summary-content-area" class="flex-1 overflow-y-auto p-6 custom-scrollbar text-sm leading-relaxed">
+          <div class="h-full flex flex-col items-center justify-center text-center p-8 text-[var(--text-muted)]">
+            <i class="fa-solid fa-wand-magic-sparkles text-3xl mb-2 text-[var(--c-lavender)] opacity-50"></i>
+            <p class="text-xs font-medium text-[var(--text-secondary)]" data-i18n="noSummaryYet">لم يتم توليد ملخص بعد</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Quiz Panel -->
+      <div id="quiz-view-panel" class="hidden flex-1 flex flex-col overflow-hidden">
+        <div class="p-3.5 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] flex items-center justify-between flex-wrap gap-2">
+          <span class="text-xs font-bold text-[var(--c-cream)]" data-i18n="quizTitle">مولّد الاختبارات والتقييم الذاتي</span>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <select id="quiz-count-select" class="bg-[var(--bg-app)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--c-cream)] focus:outline-none">
+              <option value="5">5 أسئلة / Questions</option>
+              <option value="10">10 أسئلة / Questions</option>
+              <option value="15">15 سؤالاً / Questions</option>
+            </select>
+
+            <select id="quiz-type-select" class="bg-[var(--bg-app)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 text-xs text-[var(--c-cream)] focus:outline-none">
+              <option value="all">متنوع (MCQ + صح/خطأ)</option>
+              <option value="mcq">اختيار من متعدد (MCQ)</option>
+              <option value="boolean">صح أو خطأ فقط</option>
+            </select>
+
+            <button id="btn-generate-quiz" class="btn-secondary px-3 py-1 text-xs flex items-center gap-1" data-i18n="generateNewQuiz">
+              <i class="fa-solid fa-bolt text-xs"></i>
+              <span>إنشاء اختبار جديد</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="quiz-content-area" class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          <div class="h-full flex flex-col items-center justify-center text-center p-8 text-[var(--text-muted)]">
+            <i class="fa-solid fa-graduation-cap text-3xl mb-2 text-[var(--c-sky)] opacity-50"></i>
+            <p class="text-xs font-medium text-[var(--text-secondary)]" data-i18n="quizPromptText">اختر الإعدادات واضغط "إنشاء اختبار جديد" لبدء التقييم التفاعلي.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </main>
+
+  <!-- Clean Footer with Mohammed Turkistani Attribution -->
+  <footer class="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] py-3 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p class="font-medium text-[var(--text-secondary)]">
+        <span data-i18n="devCreditPrefix">تمت برمجة وتطوير هذا البرنامج بالكامل بواسطة:</span> 
+        <strong class="text-[var(--c-cream)] font-bold">محمد تركستاني</strong>
+      </p>
+      <div class="flex items-center gap-3 text-[11px] text-[var(--text-muted)]">
+        <span>Mojaweb 2026</span>
+        <span>•</span>
+        <span>Render Service</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-200 px-4 py-2.5 rounded-[var(--radius-md)] text-xs font-medium shadow-xl"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
